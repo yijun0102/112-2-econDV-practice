@@ -1,3 +1,5 @@
-# invisible object
-.a <- 3
-.a + 7
+#test 2
+a <- c(1,3,3,2)
+b <- c(45, 78, 93,21)
+
+a + b
