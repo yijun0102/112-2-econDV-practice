@@ -37,4 +37,17 @@ rate %>%
        color = "地區") +
   theme_minimal()
 
+## 作圖 ------
+ggplot(temp, aes(x = 觀測時間)) +
+  geom_line(aes(y = 臺北, color = "臺北"), alpha = 1) +
+  geom_line(aes(y = 臺中, color = "臺中"), alpha = 1) +
+  geom_line(aes(y = 臺南, color = "臺南"), alpha = 1) +
+  geom_line(aes(y = 臺東, color = "臺東"), alpha = 1) +
+  labs(title = "各地月均溫", x = "日期", y = "溫度") +
+  scale_color_manual(values = c("臺北" = "skyblue", "臺中" = "green", "臺南" = "orange", "臺東" = "purple"),
+                     breaks = c("臺北", "臺中", "臺南", "臺東"),
+                     name = "城市") +
+  #coord_cartesian(ylim = c(5, NA)) +  # 设置y轴的范围从5开始
+  theme_minimal()
+
 
