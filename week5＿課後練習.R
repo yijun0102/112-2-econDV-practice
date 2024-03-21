@@ -19,15 +19,15 @@ data_list <- list()
 
 # 遍歷所有學年的 CSV 下載網址
 for (year in names(csv_urls)) {
-  # 排除110年，单独处理
+  # 排除110年，單獨處理
   if (year == 110) {
-    # 下载 CSV 文件，并指定文件编码为BIG5
+    # 下載 CSV 文件，並指定文件編碼為 BIG5
     download.file(csv_urls[[year]], destfile = paste0(year, ".csv"))
     
-    # 读取 CSV 文件并存储到列表中
+    # 讀取 CSV 文件並儲存到列表中
     data_list[[year]] <- read.csv(paste0(year, ".csv"), fileEncoding = "BIG5")
   } else {
-    # 下载并读取其他学年的 CSV 文件
+    # 下載並讀取其他學年的 CSV 文件
     download.file(csv_urls[[year]], destfile = paste0(year, ".csv"))
     data_list[[year]] <- read.csv(paste0(year, ".csv"))
   }
@@ -67,7 +67,7 @@ view(combined_data)
 ## 畫圖
 library(ggplot2)
 
-# 计算每个学年各学制的人数总和
+# 計算每个學年各學制的人數總和
 sum_data <- combined_data %>%
   group_by(學年度) %>%
   summarise(
@@ -77,12 +77,11 @@ sum_data <- combined_data %>%
   ) %>%
   pivot_longer(cols = starts_with("在學學生人數_"), names_to = "學制", values_to = "在學學生人數")
 
-# 定義學制levels
-# 将学年度列转换为因子变量，并指定自定义的级别
+# 重新定義學制levels
 sum_data$學制 <- factor(sum_data$學制, levels = c("在學學生人數_博士班", "在學學生人數_碩士班", "在學學生人數_學士班"))
 
 '''
-# 绘制堆积条形图
+# 繪製堆積長條圖
 ggplot(sum_data, aes(x = 在學學生人數, y = factor(學年度), fill = 學制)) +
   geom_bar(stat = "identity") +
   labs(
@@ -95,7 +94,7 @@ ggplot(sum_data, aes(x = 在學學生人數, y = factor(學年度), fill = 學�
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 '''
 
-# 绘制 ggplot2 图表
+# 繪製 ggplot2 互動式圖表
 library(plotly)
 
 gg <- ggplot(sum_data, aes(x = 在學學生人數, y = factor(學年度), fill = 學制)) +
@@ -109,9 +108,9 @@ gg <- ggplot(sum_data, aes(x = 在學學生人數, y = factor(學年度), fill =
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# 将 ggplot2 图表转换为 Plotly 图表
+# 將 ggplot2 圖表轉換為 Plotly 圖表
 plotly_chart <- ggplotly(gg)
 
-# 显示 Plotly 图表
+# 顯示 Plotly 圖表
 plotly_chart
 
