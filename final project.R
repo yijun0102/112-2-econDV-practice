@@ -6,7 +6,6 @@ library(plotly)
 # 讀取資料
 house <- read_csv("/Users/yeyijun/Documents/EconDV/112-2-econDV-practice/房價所得比2002-2022.csv")
 birth <- read_csv("/Users/yeyijun/Documents/EconDV/112-2-econDV-practice/生育率2002-2022.csv")
-population <- read_csv("/Users/yeyijun/Documents/EconDV/112-2-econDV-practice/人口密度2002-2022.csv")
 
 # 移除空值欄位
 house[house == "---"] <- NA
@@ -31,15 +30,6 @@ names(birth)[6] <- "台中市"
 names(birth)[7] <- "台南市"
 names(birth)[17] <- "台東縣"
 
-population <- population %>%
-  select(-金門縣, -連江縣)
-names(population)[2] <- "全國"
-names(population)[4] <- "台北市"
-names(population)[6] <- "台中市"
-names(population)[7] <- "台南市"
-names(population)[17] <- "台東縣"
-
-
 # 取得城市清單
 cities <- colnames(house)[-1]
 
@@ -51,8 +41,7 @@ data <- data.frame()
 for (city in cities) {
   temp <- data.frame(
     house = house[[city]],
-    birth = birth[[city]],
-    population = population[[city]]
+    birth = birth[[city]]
   )
   temp$city <- city
   data <- rbind(data, temp)
@@ -60,8 +49,8 @@ for (city in cities) {
 
 # 設定顏色
 data$color <- "#c2c1be"
-data$color[data$city == "全國"] <- "#c47f79"
-data$color[data$city == "台北市"] <- "#99a889"
+data$color[data$city == "全國"] <- '#99a889'
+data$color[data$city == "台北市"] <- "#c47f79"
 
 data$label <- "其他城市"
 data$label[data$city == "全國"] <- "全國"
@@ -69,28 +58,29 @@ data$label[data$city == "台北市"] <- "台北市"
       
 
 # 繪製互動式點狀圖
-plot2 <- plot_ly() %>%
-  add_trace(
-    data = data %>% filter(label == "台北市"),
-    x = ~house, y = ~birth, type = 'scatter', mode = 'markers',
-    marker = list(color = "#99a889", size = ~population, opacity = 0.5, sizemode = 'diameter', sizeref = 2*max(data$population)/(12**2), line = list(color = 'rgba(0, 0, 0, 0)')),
-    name = "台北市"
-  ) %>%
+plot <- plot_ly() %>%
   add_trace(
     data = data %>% filter(label == "其他城市"),
     x = ~house, y = ~birth, type = 'scatter', mode = 'markers',
-    marker = list(color = "#c2c1be", size = ~population, opacity = 0.4, sizemode = 'diameter', sizeref = 2*max(data$population)/(12**2), line = list(color = 'rgba(0, 0, 0, 0)')),
+    marker = list(color = "#c2c1be", size = 12, opacity = 0.3),
     name = "其他城市"
   ) %>%
   add_trace(
     data = data %>% filter(label == "全國"),
     x = ~house, y = ~birth, type = 'scatter', mode = 'markers',
-    marker = list(color = "#c47f79", size = ~population, opacity = 0.8, sizemode = 'diameter', sizeref = 2*max(data$population)/(12**2), line = list(color = 'rgba(0, 0, 0, 0)')),
+    marker = list(color = "#99a889", size = 12, opacity = 0.8),
     name = "全國"
+  ) %>%
+  add_trace(
+    data = data %>% filter(label == "台北市"),
+    x = ~house, y = ~birth, type = 'scatter', mode = 'markers',
+    marker = list(color = "#c47f79", size = 12, opacity = 0.8),
+    name = "台北市"
   ) %>%
   layout(
     xaxis = list(title = "<b>房價所得比(年)<b>", showline = TRUE, zeroline = TRUE),
     yaxis = list(title = "<b>生育率(‰)<b>", angle = 90, showline = TRUE, zeroline = TRUE),
+    legend = list(traceorder = "reversed"),
     showlegend = TRUE,
     title = list(
       text = "<b>生育率與房價所得比的關聯</b><br><span style='font-size:17px;'>台灣各縣市近二十年</span>",
@@ -122,14 +112,14 @@ x_range <- seq(min(data$house, na.rm = TRUE), max(data$house, na.rm = TRUE), len
 data_national <- data %>% filter(city == "全國")
 lm_national <- lm(birth ~ house, data = data_national)
 national_y_range <- predict(lm_national, newdata = data.frame(house = x_range))
-plot2 <- plot2 %>%
+plot <- plot %>%
   add_lines(
     x = x_range, y = national_y_range,
-    name = NULL, line = list(color = '#c47f79', width = 4), showlegend = FALSE
+    name = NULL, line = list(color = '#99a889', width = 4), showlegend = FALSE
   ) %>%
   add_annotations(
     x = x_range[100], y = national_y_range[100], text = "<b> 全國<b>",
-    showarrow = FALSE, font = list(color = '#c47f79', size = 16), xanchor = 'left'
+    showarrow = FALSE, font = list(color = '#99a889', size = 16), xanchor = 'left'
   )
 
 # 台北迴歸線
@@ -139,14 +129,18 @@ taipei_y_range <- predict(lm_taipei, newdata = data.frame(house = x_range))
 plot <- plot %>%
   add_lines(
     x = x_range, y = taipei_y_range,
-    name = NULL, line = list(color = '#99a889', width = 4), showlegend = FALSE
+    name = NULL, line = list(color = '#FFF', width = 5), showlegend = FALSE
+  ) %>%
+  add_lines(
+    x = x_range, y = taipei_y_range,
+    name = NULL, line = list(color = '#c47f79', width = 4), showlegend = FALSE
   ) %>%
   add_annotations(
     x = x_range[100], y = taipei_y_range[100], text = "<b> 台北<b>",
-    showarrow = FALSE, font = list(color = '#99a889', size = 16), xanchor = 'left'
+    showarrow = FALSE, font = list(color = '#c47f79', size = 16), xanchor = 'left'
   )
 
 # 顯示圖表
-plot2
+plot
 
 
