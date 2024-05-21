@@ -49,8 +49,8 @@ for (city in cities) {
 
 # 設定顏色
 data$color <- "#c2c1be"
-data$color[data$city == "全國"] <- '#99a889'
-data$color[data$city == "台北市"] <- "#c47f79"
+data$color[data$city == "全國"] <- '#2A9D8f'
+data$color[data$city == "台北市"] <- "#E76F51"
 
 data$label <- "其他城市"
 data$label[data$city == "全國"] <- "全國"
@@ -68,13 +68,13 @@ plot <- plot_ly() %>%
   add_trace(
     data = data %>% filter(label == "全國"),
     x = ~house, y = ~birth, type = 'scatter', mode = 'markers',
-    marker = list(color = "#99a889", size = 12, opacity = 0.8),
+    marker = list(color = "#2A9D8f", size = 12, opacity = 0.7),
     name = "全國"
   ) %>%
   add_trace(
     data = data %>% filter(label == "台北市"),
     x = ~house, y = ~birth, type = 'scatter', mode = 'markers',
-    marker = list(color = "#c47f79", size = 12, opacity = 0.8),
+    marker = list(color = "#E76F51", size = 12, opacity = 0.7),
     name = "台北市"
   ) %>%
   layout(
@@ -115,11 +115,11 @@ national_y_range <- predict(lm_national, newdata = data.frame(house = x_range))
 plot <- plot %>%
   add_lines(
     x = x_range, y = national_y_range,
-    name = NULL, line = list(color = '#99a889', width = 4), showlegend = FALSE
+    name = NULL, line = list(color = '#2A9D8f', width = 4), showlegend = FALSE
   ) %>%
   add_annotations(
     x = x_range[100], y = national_y_range[100], text = "<b> 全國<b>",
-    showarrow = FALSE, font = list(color = '#99a889', size = 16), xanchor = 'left'
+    showarrow = FALSE, font = list(color = '#2A9D8f', size = 16), xanchor = 'left'
   )
 
 # 台北迴歸線
@@ -133,11 +133,11 @@ plot <- plot %>%
   ) %>%
   add_lines(
     x = x_range, y = taipei_y_range,
-    name = NULL, line = list(color = '#c47f79', width = 4), showlegend = FALSE
+    name = NULL, line = list(color = '#E76F51', width = 4), showlegend = FALSE
   ) %>%
   add_annotations(
     x = x_range[100], y = taipei_y_range[100], text = "<b> 台北<b>",
-    showarrow = FALSE, font = list(color = '#c47f79', size = 16), xanchor = 'left'
+    showarrow = FALSE, font = list(color = '#E76F51', size = 16), xanchor = 'left'
   )
 
 # 顯示圖表
