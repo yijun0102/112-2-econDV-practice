@@ -33,6 +33,7 @@ names(birth)[17] <- "台東縣"
 # 取得城市清單
 cities <- colnames(house)[-1]
 
+
 # 建立空的資料框架
 data <- data.frame()
 
@@ -45,8 +46,6 @@ for (city in cities) {
   temp$city <- city
   data <- rbind(data, temp)
 }
-
-
 
 # 設定顏色
 data$color <- "#c2c1be"
